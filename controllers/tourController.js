@@ -2,7 +2,28 @@ const fs = require('fs');
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
-module.exports.getAllTour = (req, res) => {
+exports.checkID = (req, res, next, val) => {
+    if(req.params.id * 1 > tours.length){
+        return res.status(404).json({
+            status:"fail",
+            message: "Invalid id"
+        })
+    }
+    next();
+}
+
+exports.checkBody = (req, res, next) => {
+    const {name, price} = req.body;
+    if(!name || !price){
+        return res.status(400).json({
+            status: 'fail',
+            message: 'Missing name or price'
+        })
+    }
+    next();
+}
+
+exports.getAllTour = (req, res) => {
     res.status(200).json({
         status:"success",
         results: tours.length,
@@ -12,7 +33,7 @@ module.exports.getAllTour = (req, res) => {
     })
 }
 
-module.exports.createTour = (req, res) => {
+exports.createTour = (req, res) => {
     // console.log(req.body);
     const newId = tours[tours.length-1].id + 1;
     console.log(newId);
@@ -28,16 +49,9 @@ module.exports.createTour = (req, res) => {
     })
 }
 
-module.exports.getTour = (req, res) => {
+exports.getTour = (req, res) => {
     const id = req.params.id * 1;
     const tour = tours.find(el => el.id === id);
-
-    if(!tour){
-        return res.status(404).json({
-            status:"fail",
-            message: "Invalid id"
-        })
-    }
 
     res.status(200).json({
         status:"success",
@@ -47,16 +61,9 @@ module.exports.getTour = (req, res) => {
     })
 }
 
-module.exports.updateTour = (req, res) => {
+exports.updateTour = (req, res) => {
     const id = req.params.id * 1;
     const tour = tours.find(el => el.id === id);
-
-    if(!tour){
-        return res.status(404).json({
-            status:"fail",
-            message: "Invalid id"
-        })
-    }
 
     res.status(200).json({
         status:"success",
@@ -66,16 +73,9 @@ module.exports.updateTour = (req, res) => {
     })
 }
 
-module.exports.deleteTour = (req, res) => {
+exports.deleteTour = (req, res) => {
     const id = req.params.id * 1;
     const tour = tours.find(el => el.id === id);
-
-    if(!tour){
-        return res.status(404).json({
-            status:"fail",
-            message: "Invalid id"
-        })
-    }
 
     res.status(204).json({
         status:"success",
