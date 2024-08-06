@@ -1,4 +1,4 @@
-const sendErrorDev = (req, res) => {
+const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
         status: err.status,
         error: err,
@@ -7,7 +7,7 @@ const sendErrorDev = (req, res) => {
     })
 }
 
-const sendErrorProd = (req, res) => {
+const sendErrorProd = (err, res) => {
     // Operational, trusted error: send message to client 
     if(err.isOperational){
         res.status(err.statusCode).json({
